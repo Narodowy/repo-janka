@@ -19,7 +19,7 @@
 
       const rozmiarSegmentu = 10;
 
-      const wąż = [{ x: 3, y: 3 }];
+      const snake = [{ x: 3, y: 3 }];
       const kierunek = { x: 1, y: 0 };
 
       const jedzenie = { x: 10, y: 10 };
@@ -32,17 +32,17 @@
 
       function rysujPlansze() {
         ctx.clearRect(0, 0, plansza.width, plansza.height);
-        wąż.forEach((segment) => rysujSegment(segment.x, segment.y));
+        snake.forEach((segment) => rysujSegment(segment.x, segment.y));
         rysujSegment(jedzenie.x, jedzenie.y);
       }
 
       function kolizja() {
-        const glowa = wąż[0];
+        const glowa = snake[0];
         if (glowa.x < 0 || glowa.y < 0 || glowa.x >= plansza.width / rozmiarSegmentu || glowa.y >= plansza.height / rozmiarSegmentu) {
           return true; // Kolizja z granicami planszy
         }
         for (let i = 1; i < wąż.length; i++) {
-          if (wąż[i].x === glowa.x && wąż[i].y === glowa.y) {
+          if (snake[i].x === glowa.x && snake[i].y === glowa.y) {
             return true; // Kolizja z samym sobą
           }
         }
@@ -50,11 +50,11 @@
       }
 
       function aktualizuj() {
-        const glowa = Object.assign({}, wąż[0]);
+        const glowa = Object.assign({}, snake[0]);
         glowa.x += kierunek.x;
         glowa.y += kierunek.y;
 
-        wąż.unshift(glowa);
+        snake.unshift(glowa);
 
         if (glowa.x === jedzenie.x && glowa.y === jedzenie.y) {
           punkty++;
@@ -66,8 +66,8 @@
 
         if (kolizja()) {
           alert("Koniec gry! Twój wynik: " + punkty);
-          wąż.length = 1;
-          wąż[0] = { x: 3, y: 3 };
+          snake.length = 1;
+          snake[0] = { x: 3, y: 3 };
           kierunek.x = 1;
           kierunek.y = 0;
           punkty = 0;
