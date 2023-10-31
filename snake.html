@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gra węża</title>
+    <title>Gra w snake</title>
     <style>
       #plansza {
         width: 300px;
@@ -40,9 +40,7 @@
         jedzenie.x = Math.floor(Math.random() * (plansza.width / rozmiarSegmentu));
         jedzenie.y = Math.floor(Math.random() * (plansza.height / rozmiarSegmentu));
       }
-
       
-
       function kolizja() {
         const glowa = wąż[0];
         if (
