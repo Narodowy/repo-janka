@@ -41,7 +41,7 @@
         if (glowa.x < 0 || glowa.y < 0 || glowa.x >= plansza.width / rozmiarSegmentu || glowa.y >= plansza.height / rozmiarSegmentu) {
           return true; // Kolizja z granicami planszy
         }
-        for (let i = 1; i < wąż.length; i++) {
+        for (let i = 1; i < snake.length; i++) {
           if (snake[i].x === glowa.x && snake[i].y === glowa.y) {
             return true; // Kolizja z samym sobą
           }
