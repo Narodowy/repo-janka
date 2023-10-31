@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gra w snake</title>
+    <title>Gra wąż</title>
     <style>
       #plansza {
         width: 300px;
@@ -11,18 +11,18 @@
     </style>
   </head>
   <body>
-    <h1>Gra w snake</h1>
-    <div id="plansza"></div>
+    <h1>Gra wąż</h1>
+    <canvas id="plansza" width="300" height="300"></canvas>
     <script>
       const plansza = document.getElementById("plansza");
       const ctx = plansza.getContext("2d");
 
       const rozmiarSegmentu = 10;
-      const kierunki = { left: 0, up: 1, right: 2, down: 3 };
 
-      let wąż = [{ x: 10, y: 10 }];
-      let kierunek = kierunki.right;
-      let jedzenie = { x: 5, y: 5 };
+      const wąż = [{ x: 3, y: 3 }];
+      const kierunek = { x: 1, y: 0 };
+
+      const jedzenie = { x: 10, y: 10 };
       let punkty = 0;
 
       function rysujSegment(x, y) {
@@ -36,19 +36,9 @@
         rysujSegment(jedzenie.x, jedzenie.y);
       }
 
-      function generujNoweJedzenie() {
-        jedzenie.x = Math.floor(Math.random() * (plansza.width / rozmiarSegmentu));
-        jedzenie.y = Math.floor(Math.random() * (plansza.height / rozmiarSegmentu));
-      }
-      
       function kolizja() {
         const glowa = wąż[0];
-        if (
-          glowa.x < 0 ||
-          glowa.y < 0 ||
-          glowa.x >= plansza.width / rozmiarSegmentu ||
-          glowa.y >= plansza.height / rozmiarSegmentu
-        ) {
+        if (glowa.x < 0 || glowa.y < 0 || glowa.x >= plansza.width / rozmiarSegmentu || glowa.y >= plansza.height / rozmiarSegmentu) {
           return true; // Kolizja z granicami planszy
         }
         for (let i = 1; i < wąż.length; i++) {
@@ -61,44 +51,42 @@
 
       function aktualizuj() {
         const glowa = Object.assign({}, wąż[0]);
-
-        if (kierunek === kierunki.left) {
-          glowa.x--;
-        } else if (kierunek === kierunki.up) {
-          glowa.y--;
-        } else if (kierunek === kierunki.right) {
-          glowa.x++;
-        } else if (kierunek === kierunki.down) {
-          glowa.y++;
-        }
+        glowa.x += kierunek.x;
+        glowa.y += kierunek.y;
 
         wąż.unshift(glowa);
 
         if (glowa.x === jedzenie.x && glowa.y === jedzenie.y) {
           punkty++;
-          generujNoweJedzenie();
+          jedzenie.x = Math.floor(Math.random() * (plansza.width / rozmiarSegmentu));
+          jedzenie.y = Math.floor(Math.random() * (plansza.height / rozmiarSegmentu));
         } else {
           wąż.pop();
         }
 
         if (kolizja()) {
           alert("Koniec gry! Twój wynik: " + punkty);
-          wąż = [{ x: 10, y: 10 }];
-          kierunek = kierunki.right;
+          wąż.length = 1;
+          wąż[0] = { x: 3, y: 3 };
+          kierunek.x = 1;
+          kierunek.y = 0;
           punkty = 0;
-          generujNoweJedzenie();
         }
       }
 
       function zmienKierunek(event) {
-        if (event.key === "ArrowLeft" && kierunek !== kierunki.right) {
-          kierunek = kierunki.left;
-        } else if (event.key === "ArrowUp" && kierunek !== kierunki.down) {
-          kierunek = kierunki.up;
-        } else if (event.key === "ArrowRight" && kierunek !== kierunki.left) {
-          kierunek = kierunki.right;
-        } else if (event.key === "ArrowDown" && kierunek !== kierunki.up) {
-          kierunek = kierunki.down;
+        if (event.key === "ArrowLeft" && kierunek.x !== 1) {
+          kierunek.x = -1;
+          kierunek.y = 0;
+        } else if (event.key === "ArrowUp" && kierunek.y !== 1) {
+          kierunek.x = 0;
+          kierunek.y = -1;
+        } else if (event.key === "ArrowRight" && kierunek.x !== -1) {
+          kierunek.x = 1;
+          kierunek.y = 0;
+        } else if (event.key === "ArrowDown" && kierunek.y !== -1) {
+          kierunek.x = 0;
+          kierunek.y = 1;
         }
       }
 
