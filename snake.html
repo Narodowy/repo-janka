@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gra węża</title>
+    <style>
+      #plansza {
+        width: 300px;
+        height: 300px;
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gra węża</h1>
+    <div id="plansza"></div>
+    <script>
+      const plansza = document.getElementById("plansza");
+      const ctx = plansza.getContext("2d");
+
+      const rozmiarSegmentu = 10;
+      const kierunki = { left: 0, up: 1, right: 2, down: 3 };
+
+      let wąż = [{ x: 10, y: 10 }];
+      let kierunek = kierunki.right;
+      let jedzenie = { x: 5, y: 5 };
+      let punkty = 0;
+
+      function rysujSegment(x, y) {
+        ctx.fillStyle = "#00f";
+        ctx.fillRect(x * rozmiarSegmentu, y * rozmiarSegmentu, rozmiarSegmentu, rozmiarSegmentu);
+      }
+
+      function rysujPlansze() {
+        ctx.clearRect(0, 0, plansza.width, plansza.height);
+        wąż.forEach((segment) => rysujSegment(segment.x, segment.y));
+        rysujSegment(jedzenie.x, jedzenie.y);
+      }
+
+      function generujNoweJedzenie() {
+        jedzenie.x = Math.floor(Math.random() * (plansza.width / rozmiarSegmentu));
+        jedzenie.y = Math.floor(Math.random() * (plansza.height / rozmiarSegmentu));
+      }
+
+      function kolizja() {
+        const glowa = wąż[0];
+        if (
+          glowa.x < 0 ||
+          glowa.y < 0 ||
+          glowa.x >= plansza.width / rozmiarSegmentu ||
+          glowa.y >= plansza.height / rozmiarSegmentu
+        ) {
+          return true; // Kolizja z granicami planszy
+        }
+        for (let i = 1; i < wąż.length; i++) {
+          if (wąż[i].x === glowa.x && wąż[i].y === glowa.y) {
+            return true; // Kolizja z samym sobą
+          }
+        }
+        return false;
+      }
+
+      function aktualizuj() {
+        const glowa = Object.assign({}, wąż[0]);
+
+        if (kierunek === kierunki.left) {
+          glowa.x--;
+        } else if (kierunek === kierunki.up) {
+          glowa.y--;
+        } else if (kierunek === kierunki.right) {
+          glowa.x++;
+        } else if (kierunek === kierunki.down) {
+          glowa.y++;
+        }
+
+        wąż.unshift(glowa);
+
+        if (glowa.x === jedzenie.x && glowa.y === jedzenie.y) {
+          punkty++;
+          generujNoweJedzenie();
+        } else {
+          wąż.pop();
+        }
+
+        if (kolizja()) {
+          alert("Koniec gry! Twój wynik: " + punkty);
+          wąż = [{ x: 10, y: 10 }];
+          kierunek = kierunki.right;
+          punkty = 0;
+          generujNoweJedzenie();
+        }
+      }
+
+      function zmienKierunek(event) {
+        if (event.key === "ArrowLeft" && kierunek !== kierunki.right) {
+          kierunek = kierunki.left;
+        } else if (event.key === "ArrowUp" && kierunek !== kierunki.down) {
+          kierunek = kierunki.up;
+        } else if (event.key === "ArrowRight" && kierunek !== kierunki.left) {
+          kierunek = kierunki.right;
+        } else if (event.key === "ArrowDown" && kierunek !== kierunki.up) {
+          kierunek = kierunki.down;
+        }
+      }
+
+      document.addEventListener("keydown", zmienKierunek);
+
+      setInterval(() => {
+        aktualizuj();
+        rysujPlansze();
+      }, 100);
+    </script>
+  </body>
+</html>
